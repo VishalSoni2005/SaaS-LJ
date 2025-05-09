@@ -1,33 +1,88 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { AlertCircle, Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { useAuth } from "@/components/auth-provider"
-import { CreateBillForm } from "@/components/create-bill-form"
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { useState } from "react";
+import Link from "next/link";
+import { AlertCircle, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/components/auth-provider";
+import { CreateBillForm } from "@/components/create-bill-form";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { getCurrentUser } from "@/lib/actions/auth.action";
 
-export default function Dashboard() {
-  const { user } = useAuth()
+export default async function Dashboard() {
+  const user = await getCurrentUser();
   const [recentBills, setRecentBills] = useState([
-    { id: "INV-001", customer: "Rahul Sharma", amount: "₹45,000", status: "Paid", date: "2023-05-15" },
-    { id: "INV-002", customer: "Priya Patel", amount: "₹78,500", status: "Pending", date: "2023-05-18" },
-    { id: "INV-003", customer: "Amit Singh", amount: "₹32,750", status: "Paid", date: "2023-05-20" },
-    { id: "INV-004", customer: "Neha Gupta", amount: "₹56,200", status: "Overdue", date: "2023-05-10" },
-    { id: "INV-005", customer: "Vikram Mehta", amount: "₹94,300", status: "Paid", date: "2023-05-22" },
-  ])
+    {
+      id: "INV-001",
+      customer: "Rahul Sharma",
+      amount: "₹45,000",
+      status: "Paid",
+      date: "2023-05-15",
+    },
+    {
+      id: "INV-002",
+      customer: "Priya Patel",
+      amount: "₹78,500",
+      status: "Pending",
+      date: "2023-05-18",
+    },
+    {
+      id: "INV-003",
+      customer: "Amit Singh",
+      amount: "₹32,750",
+      status: "Paid",
+      date: "2023-05-20",
+    },
+    {
+      id: "INV-004",
+      customer: "Neha Gupta",
+      amount: "₹56,200",
+      status: "Overdue",
+      date: "2023-05-10",
+    },
+    {
+      id: "INV-005",
+      customer: "Vikram Mehta",
+      amount: "₹94,300",
+      status: "Paid",
+      date: "2023-05-22",
+    },
+  ]);
 
   return (
     <div className="p-4 sm:p-6">
       <div className="mb-6 sm:mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold">Welcome, {user?.name || "User"}</h1>
-          <p className="text-muted-foreground">Here's what's happening with your jewellery business today.</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            Welcome, {user?.name || "User"}
+          </h1>
+          <p className="text-muted-foreground">
+            Here's what's happening with your jewellery business today.
+          </p>
         </div>
         <Sheet>
           <SheetTrigger asChild>
@@ -38,7 +93,9 @@ export default function Dashboard() {
           <SheetContent className="w-full sm:max-w-md md:max-w-lg overflow-y-auto">
             <SheetHeader>
               <SheetTitle>Create New Bill</SheetTitle>
-              <SheetDescription>Fill in the details to generate a new bill for your customer.</SheetDescription>
+              <SheetDescription>
+                Fill in the details to generate a new bill for your customer.
+              </SheetDescription>
             </SheetHeader>
             <ScrollArea className="h-[calc(100vh-120px)]">
               <CreateBillForm />
@@ -51,7 +108,9 @@ export default function Dashboard() {
       <div className="mb-6 sm:mb-8 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Sales (This Month)</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Sales (This Month)
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">₹3,45,670</div>
@@ -62,7 +121,9 @@ export default function Dashboard() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pending Payments</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Pending Payments
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">₹78,500</div>
@@ -73,7 +134,9 @@ export default function Dashboard() {
         </Card>
         <Card className="sm:col-span-2 lg:col-span-1">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Customers</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">
+              Total Customers
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-xl sm:text-2xl font-bold">128</div>
@@ -89,10 +152,17 @@ export default function Dashboard() {
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
           <div>
             <CardTitle>Recent Bills</CardTitle>
-            <CardDescription>View and manage your recent billing activity.</CardDescription>
+            <CardDescription>
+              View and manage your recent billing activity.
+            </CardDescription>
           </div>
-          <Link href="/dashboard/bill-history" className="mt-2 sm:mt-0">
-            <Button variant="outline" size="sm" className="w-full sm:w-auto">
+          <Link
+            href="/dashboard/bill-history"
+            className="mt-2 sm:mt-0">
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full sm:w-auto">
               View All
             </Button>
           </Link>
@@ -103,7 +173,9 @@ export default function Dashboard() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Invoice</TableHead>
-                  <TableHead className="hidden sm:table-cell">Customer</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                    Customer
+                  </TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -114,32 +186,44 @@ export default function Dashboard() {
                   <TableRow key={bill.id}>
                     <TableCell className="font-medium">
                       {bill.id}
-                      <div className="sm:hidden text-xs text-muted-foreground mt-1">{bill.customer}</div>
+                      <div className="sm:hidden text-xs text-muted-foreground mt-1">
+                        {bill.customer}
+                      </div>
                     </TableCell>
-                    <TableCell className="hidden sm:table-cell">{bill.customer}</TableCell>
+                    <TableCell className="hidden sm:table-cell">
+                      {bill.customer}
+                    </TableCell>
                     <TableCell>{bill.amount}</TableCell>
                     <TableCell>
                       <Badge
                         variant={
-                          bill.status === "Paid" ? "default" : bill.status === "Pending" ? "outline" : "destructive"
+                          bill.status === "Paid"
+                            ? "default"
+                            : bill.status === "Pending"
+                            ? "outline"
+                            : "destructive"
                         }
                         className={
                           bill.status === "Paid"
                             ? "bg-green-100 text-green-800 hover:bg-green-100"
                             : bill.status === "Pending"
-                              ? "bg-amber-100 text-amber-800 hover:bg-amber-100"
-                              : ""
-                        }
-                      >
+                            ? "bg-amber-100 text-amber-800 hover:bg-amber-100"
+                            : ""
+                        }>
                         {bill.status}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-1">
-                        <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="hidden sm:inline-flex">
                           View
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm">
                           Print
                         </Button>
                       </div>
@@ -165,10 +249,13 @@ export default function Dashboard() {
               <div>
                 <h4 className="font-medium">Payment Overdue</h4>
                 <p className="text-sm text-muted-foreground">
-                  Invoice <span className="font-medium">INV-004</span> for Neha Gupta is overdue by 5 days.
+                  Invoice <span className="font-medium">INV-004</span> for Neha
+                  Gupta is overdue by 5 days.
                 </p>
                 <div className="mt-2">
-                  <Button variant="outline" size="sm">
+                  <Button
+                    variant="outline"
+                    size="sm">
                     Send Reminder
                   </Button>
                 </div>
@@ -178,12 +265,14 @@ export default function Dashboard() {
               <AlertCircle className="mt-0.5 h-5 w-5 text-amber-500 shrink-0" />
               <div>
                 <h4 className="font-medium">Gold Rate Updated</h4>
-                <p className="text-sm text-muted-foreground">Today's gold rate has been updated to ₹5,850 per gram.</p>
+                <p className="text-sm text-muted-foreground">
+                  Today's gold rate has been updated to ₹5,850 per gram.
+                </p>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

@@ -112,6 +112,9 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
     const userData = userRecord.data() as User;
 
+    console.log("userData", userData);
+    
+
     return {
       ...userData,
       id: decodedClaim.uid,
@@ -124,5 +127,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
 
 export const isAuthenticated = async () => {
   const user = await getCurrentUser();
-  return user !== null;
+  console.log("user", user);
+  
+  return !!user;
 };

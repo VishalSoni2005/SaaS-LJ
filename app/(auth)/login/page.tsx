@@ -73,6 +73,7 @@ export default function LoginPage() {
           description: "An error occurred during login. Please try again.",
           variant: "destructive",
         });
+        return;
       }
 
       await Login({ email: email, idToken: idToken });
@@ -85,6 +86,7 @@ export default function LoginPage() {
       });
       router.push("/dashboard");
     } catch (error) {
+      console.error("Error logging in user:", error);
       toast({
         title: "Login failed",
         description: "An error occurred during login. Please try again.",
@@ -93,32 +95,6 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
-
-    // try {
-    //   // In a real app, this would be an API call to authenticate
-    //   // For demo purposes, we'll simulate a successful login after a delay
-    //   await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    //   // Check if credentials match our demo account
-    //   if (
-    //     formData.email === "helo@gmail.com" &&
-    //     formData.password === "password"
-    //   ) {
-    //     // Store auth state (in a real app, this would be a JWT token or session)
-    //     localStorage.setItem("isAuthenticated", "true");
-    //     localStorage.setItem(
-    //       "user",
-    //       JSON.stringify({ name: "Admin", email: formData.email })
-    //     );
-
-    //     toast({
-    //       title: "Login successful",
-    //       description: "Welcome back to Shree Jewellers Billing",
-    //     });
-
-    //     // Redirect to dashboard
-    //     router.push("/dashboard");
-    //   }
   };
 
   return (

@@ -7,11 +7,11 @@ const AuthLayout = async ({ children }: { children: React.ReactNode   }) => {
     const isUserAuthenticated = await isAuthenticated();
   
     if(isUserAuthenticated) {
-      redirect('/')
+      redirect('/dashboard')
     }
   return (
     
-    <div className='auth-layout'>{children}</div>
+    <div>{children}</div>
   )
 }
 

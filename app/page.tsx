@@ -1,17 +1,27 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
-import Link from "next/link"
-import { useState } from "react"
-import { ArrowRight, Download, Bell, Sparkles, Menu, PenToolIcon as Tool, Truck } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  ArrowRight,
+  Download,
+  Bell,
+  Sparkles,
+  Menu,
+  PenToolIcon as Tool,
+  Truck,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Card, CardContent } from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { isAuthenticated } from "@/lib/actions/auth.action";
 
-export default function LandingPage() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-
+const LandingPage = async () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -389,4 +399,6 @@ export default function LandingPage() {
       </footer>
     </div>
   );
-}
+};
+
+export default LandingPage;

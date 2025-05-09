@@ -19,56 +19,71 @@ import {
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "@/firebase/client";
+import { Login } from "@/lib/actions/auth.action";
+
+const LoginFormSchema = z.object({
+  email: z.string().email({ message: "Email is required" }),
+  password: z.string().min(3, { message: "Password is required" }),
+});
+
+type LoginForm = z.infer<typeof LoginFormSchema>;
+
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const form = useForm<LoginForm>({
+    resolver: zodResolver(LoginFormSchema),
+    defaultValues: {
+      email: "vsoni0882@gmail.com",
+      password: "password",
+    },
+  });
+
+  //! todo: handleSubmin
+  const handleSubmit = async (data: LoginForm) => {
+    console.log("form data is : ", data);
+
     setIsLoading(true);
 
     try {
-      // In a real app, this would be an API call to authenticate
-      // For demo purposes, we'll simulate a successful login after a delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const { email, password } = data;
+      const userCredentials = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-      // Check if credentials match our demo account
-      if (
-        formData.email === "helo@gmail.com" &&
-        formData.password === "password"
-      ) {
-        // Store auth state (in a real app, this would be a JWT token or session)
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem(
-          "user",
-          JSON.stringify({ name: "Admin", email: formData.email })
-        );
+      console.log("userCredentials", userCredentials);
 
-        toast({
-          title: "Login successful",
-          description: "Welcome back to Shree Jewellers Billing",
-        });
+      const idToken = await userCredentials.user.getIdToken();
+      console.log("idToken", idToken);
 
-        // Redirect to dashboard
-        router.push("/dashboard");
-      } else {
+      if (!idToken) {
         toast({
           title: "Login failed",
-          description: "Invalid email or password. Please try again.",
+          description: "An error occurred during login. Please try again.",
           variant: "destructive",
         });
       }
+
+      await Login({ email: email, idToken: idToken });
+
+      console.log("Login success");
+
+      toast({
+        title: "Login successful",
+        description: "Welcome back to Shree Jewellers Billing",
+      });
+      router.push("/dashboard");
     } catch (error) {
       toast({
         title: "Login failed",
@@ -78,14 +93,41 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false);
     }
+
+    // try {
+    //   // In a real app, this would be an API call to authenticate
+    //   // For demo purposes, we'll simulate a successful login after a delay
+    //   await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    //   // Check if credentials match our demo account
+    //   if (
+    //     formData.email === "helo@gmail.com" &&
+    //     formData.password === "password"
+    //   ) {
+    //     // Store auth state (in a real app, this would be a JWT token or session)
+    //     localStorage.setItem("isAuthenticated", "true");
+    //     localStorage.setItem(
+    //       "user",
+    //       JSON.stringify({ name: "Admin", email: formData.email })
+    //     );
+
+    //     toast({
+    //       title: "Login successful",
+    //       description: "Welcome back to Shree Jewellers Billing",
+    //     });
+
+    //     // Redirect to dashboard
+    //     router.push("/dashboard");
+    //   }
   };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-background to-muted p-4">
+      {/* header */}
       <div className="mb-6 md:mb-8 flex items-center gap-2">
         <Sparkles className="h-6 w-6 md:h-8 md:w-8 text-amber-500" />
         <h1 className="text-2xl md:text-3xl font-bold">
-          Shree Jewellers Billing
+          Lakhi Jewellers Management
         </h1>
       </div>
 
@@ -96,7 +138,8 @@ export default function LoginPage() {
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+
+        <form onSubmit={form.handleSubmit(handleSubmit)}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label
@@ -106,14 +149,17 @@ export default function LoginPage() {
               </Label>
               <Input
                 id="email"
-                name="email"
                 type="email"
-                placeholder="admin@shreejewellers.com"
+                placeholder="admin@Lakhijewellers.com"
                 required
-                value={formData.email}
-                onChange={handleChange}
+                {...form.register("email")}
                 className="h-10 md:h-11"
               />
+              {form.formState.errors.email && (
+                <p className="text-xs text-red-500">
+                  {form.formState.errors.email.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -131,14 +177,17 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
-                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   required
-                  value={formData.password}
-                  onChange={handleChange}
+                  {...form.register("password")}
                   className="h-10 md:h-11 pr-10"
                 />
+                {form.formState.errors.password && (
+                  <p className="text-xs text-red-500">
+                    {form.formState.errors.password.message}
+                  </p>
+                )}
                 <Button
                   type="button"
                   variant="ghost"
@@ -175,12 +224,6 @@ export default function LoginPage() {
           </CardFooter>
         </form>
       </Card>
-
-      <div className="mt-8 text-center text-sm text-muted-foreground">
-        <p>Demo credentials:</p>
-        <p>Email: admin@shreejewellers.com</p>
-        <p>Password: password</p>
-      </div>
     </div>
   );
 }

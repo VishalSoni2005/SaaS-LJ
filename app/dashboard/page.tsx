@@ -43,7 +43,7 @@ export default function Dashboard() {
       }
     };
     getCurrentUser();
-  });
+  }, []);
   // const user = { name: "Admin", email: "admin@shreejewellers.com" };
   const [recentBills, setRecentBills] = useState([
     {
@@ -88,7 +88,7 @@ export default function Dashboard() {
       <div className="mb-6 sm:mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">
-            Welcome, {user?.name || "User"}
+            Welcome, {user?.email || "User"}
           </h1>
           <p className="text-muted-foreground">
             Here's what's happening with your jewellery business today.

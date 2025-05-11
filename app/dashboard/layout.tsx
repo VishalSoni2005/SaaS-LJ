@@ -25,6 +25,12 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
 
+interface User {
+  name: string;
+  email: string;
+  id: string;
+}
+
 export default function DashboardLayout({
   children,
 }: {
@@ -35,14 +41,19 @@ export default function DashboardLayout({
 
   const pathname = usePathname();
   const { toast } = useToast();
+
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await getCurrentUserClient();
-      setUser(currentUser);
+      console.log("currentUser from useEffect Dashboard", currentUser);
+
+      if (currentUser) {
+        setUser(currentUser);
+      }
     };
     fetchUser();
   }, []);
-  
+
   // Handle logout
   const handleLogout = () => {
     // logout()

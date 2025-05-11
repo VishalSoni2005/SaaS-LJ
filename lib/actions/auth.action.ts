@@ -1,6 +1,5 @@
 "use server";
 import { auth, db } from "@/firebase/admin";
-import axios from "axios";
 import { cookies } from "next/headers";
 
 export const Register = async (UserData: RegisterParams) => {
@@ -46,17 +45,30 @@ export const Register = async (UserData: RegisterParams) => {
 
 export const getCurrentUserClient = async () => {
   try {
-    const response = await axios.get(
-      "http://localhost:3000/api/auth/current-user/",
-      {
-        withCredentials: true, // Ensures cookies are sent
-      }
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("session");
+    console.log("Session Cookie: ", sessionCookie);
+
+    if (!sessionCookie) {
+      return null;
+    }
+    console.log("im herer");
+
+    const decodedClaims = await auth.verifySessionCookie(
+      sessionCookie.value,
+      true
     );
+    console.log("im also here");
 
-    console.log("response data", response.data);
-
-    if (response.data?.user) return response.data.user;
-    throw new Error("User not found");
+    const response = await auth.getUser(decodedClaims.uid);
+    const { uid, email, displayName } = response;
+    const user = {
+      name: displayName,
+      email: email,
+      id: uid,
+    } as User;
+    console.log("user", user);
+    return user;
   } catch (error: any) {
     console.log("Error getting current user:", error.message);
     return null;

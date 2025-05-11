@@ -23,27 +23,36 @@ import { useToast } from "@/components/ui/use-toast";
 import { Suspense } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
-import { getCurrentUser } from "@/lib/actions/auth.action";
+import {
+  getCurrentUser,
+  getCurrentUserClient,
+} from "@/lib/actions/auth.action";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const [user, setUser] = useState<User | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  
+
   const pathname = usePathname();
   const { toast } = useToast();
 
-  const user = await getCurrentUser() ;
+  useEffect(() => {
+    const fetchUser = async () => {
+      const Curr_user = await getCurrentUserClient();
+      if (Curr_user) setUser(user);
+    };
+    fetchUser();
+  });
 
-
-  // const user = {name: 'vishal', email: "lakhiJewe@gmail.com"}
+  //  const user = { name: "vishal", email: "lakhiJewe@gmail.com" };
 
   // Handle logout
   const handleLogout = () => {
     // logout()
-    sessionStorage.removeItem("session");
+    // sessionStorage.removeItem("session");
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -179,10 +188,11 @@ export default async function DashboardLayout({
                   size="icon"
                   className="ml-auto"
                   onClick={() => {
-                    const element = document.querySelector("[data-radix-collection-item]") as HTMLElement | null;
+                    const element = document.querySelector(
+                      "[data-radix-collection-item]"
+                    ) as HTMLElement | null;
                     element?.click();
-                  }}
-                >
+                  }}>
                   <X className="h-5 w-5" />
                 </Button>
               </div>
@@ -241,14 +251,17 @@ export default async function DashboardLayout({
             </Suspense>
           </div>
           <div className="ml-auto flex items-center gap-4">
-            
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-500">
                 {user?.name?.charAt(0) || "U"}
               </div>
               <div className="hidden md:block">
-                <div className="text-sm font-medium">{user?.name || "User"}</div>
-                <div className="text-xs text-muted-foreground">{user?.email || "user@example.com"}</div>
+                <div className="text-sm font-medium">
+                  {user?.name || "User"}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  {user?.email || "user@example.com"}
+                </div>
               </div>
             </div>
           </div>
@@ -257,9 +270,6 @@ export default async function DashboardLayout({
         {/* Page Content */}
 
         <main className="flex-1">{children}</main>
-
-
-
       </div>
     </div>
   );

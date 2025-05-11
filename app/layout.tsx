@@ -4,7 +4,9 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { redirect } from 'next/navigation'
-import { isAuthenticated } from '@/lib/actions/auth.action'
+import { getCurrentUser, isAuthenticated } from '@/lib/actions/auth.action'
+import { isPublicRoute } from '@/lib/isPublicRoute'
+import { request } from 'http'
 // import { AuthProvider } from "@/components/auth-provider"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -14,18 +16,19 @@ export const metadata: Metadata = {
   description: "Jewellery billing SaaS for modern jewellery businesses",
 }
 
-export  default async function RootLayout({
+export  default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
 
-  const isUserAuthenticated = await isAuthenticated();
   
-  if(!isUserAuthenticated) {
-    redirect('/login')
-  }
 
+  //todo: what i need to do here i need to 
+  //todo: check once if the user is authenticated or not
+  // if yes the redirect to dashboard else leave
+
+  //! i will use this as a server component
 
   
   return (

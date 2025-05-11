@@ -1,36 +1,37 @@
 "use server";
 import { auth, db } from "@/firebase/admin";
+import axios from "axios";
 import { cookies } from "next/headers";
 
-export const Login = async (UserData: loginInParams) => {
-  const { email, idToken } = UserData;
+// export const Login = async (UserData: loginInParams) => {
+//   const { email, idToken } = UserData;
 
-  try {
-    const userRecord = await auth.getUserByEmail(email);
+//   try {
+//     const userRecord = await auth.getUserByEmail(email);
 
-    if (!userRecord) {
-      return {
-        success: false,
-        message: "User not found",
-      };
-    }
+//     if (!userRecord) {
+//       return {
+//         success: false,
+//         message: "User not found",
+//       };
+//     }
 
-    await setSessionCookie(idToken);
+//     await setSessionCookie(idToken);
 
-    return {
-      success: true,
-      message: "User logged in successfully",
-    };
-  } catch (error: any) {
-    console.error("Error logging in user:", error);
-    console.log("Error in auth action", error.code);
+//     return {
+//       success: true,
+//       message: "User logged in successfully",
+//     };
+//   } catch (error: any) {
+//     console.error("Error logging in user:", error);
+//     console.log("Error in auth action", error.code);
 
-    return {
-      success: false,
-      message: "Invalid credentials",
-    };
-  }
-};
+//     return {
+//       success: false,
+//       message: "Invalid credentials",
+//     };
+//   }
+// };
 
 export const Register = async (UserData: RegisterParams) => {
   const { uid, name, email } = UserData;
@@ -73,25 +74,27 @@ export const Register = async (UserData: RegisterParams) => {
   }
 };
 
-export const setSessionCookie = async (idToken: string) => {
-  const cookieStore = await cookies();
+// export const setSessionCookie = async (idToken: string) => {
+// //   const cookieStore = await cookies();
 
-  try {
-    const sessionCookie = await auth.createSessionCookie(idToken, {
-      expiresIn: 60 * 60 * 24 * 7, // 7 days
-    });
+// //   try {
+// //     //* create cookie
+// //     const sessionCookie = await auth.createSessionCookie(idToken, {
+// //       expiresIn: 60 * 60 * 24 * 7, // 7 days
+// //     });
 
-    cookieStore.set("session", sessionCookie, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7,
-    });
-  } catch (error: any) {
-    console.error("Error setting session cookie:", error);
-    throw new Error("Failed to set session cookie");
-  }
-};
+// //     //*
+// //     cookieStore.set("session", sessionCookie, {
+// //       httpOnly: true,
+// //       secure: process.env.NODE_ENV === "production",
+// //       sameSite: "lax",
+// //       maxAge: 60 * 60 * 24 * 7,
+// //     });
+// //   } catch (error: any) {
+// //     console.error("Error setting session cookie:", error);
+// //     throw new Error("Failed to set session cookie");
+// //   }
+// };
 
 export const getCurrentUser = async (): Promise<User | null> => {
   try {
@@ -99,28 +102,49 @@ export const getCurrentUser = async (): Promise<User | null> => {
     const sessionCookie = cookieStore.get("session")?.value;
 
     if (!sessionCookie) {
+      console.log("Session cookie not found");
       return null;
     }
 
-    const decodedClaim = await auth.verifySessionCookie(sessionCookie, true);
+    try {
+      const decodedClaim = await auth.verifySessionCookie(sessionCookie, true);
+      const userRecord = await auth.getUser(decodedClaim.uid);
 
-    const userRecord = await db.collection("users").doc(decodedClaim.uid).get();
-
-    if (!userRecord.exists) {
+      return {
+        id: userRecord.uid,
+        email: userRecord.email || "",
+        name: userRecord.displayName || "",
+      };
+    } catch (error: any) {
+      // Check if the error is related to an expired session
+      if (error.code === "auth/session-cookie-expired") {
+        console.error("Session expired. Redirecting to login.");
+        // Clear the expired session cookie
+        cookieStore.set("session", "", { maxAge: -1, path: "/" });
+      } else {
+        console.error("Error verifying session cookie:", error);
+      }
       return null;
     }
-
-    const userData = userRecord.data() as User;
-
-    console.log("userData", userData);
-    
-
-    return {
-      ...userData,
-      id: decodedClaim.uid,
-    };
   } catch (error: any) {
     console.error("Error retrieving current user:", error);
+    return null;
+  }
+};
+
+export const getCurrentUserClient = async () => {
+  try {
+    const response = await axios.get("/api/auth/current-user", {
+      withCredentials: true,
+    });
+
+    if (response.status === 200) {
+      return response.data;
+    }
+    return null;
+  } catch (error) {
+    console.log("Error getting current user ;", error);
+
     return null;
   }
 };
@@ -128,6 +152,6 @@ export const getCurrentUser = async (): Promise<User | null> => {
 export const isAuthenticated = async () => {
   const user = await getCurrentUser();
   console.log("user", user);
-  
+
   return !!user;
 };

@@ -33,8 +33,9 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCurrentUser } from "@/lib/actions/auth.action";
 
-export default async function Dashboard() {
-  const user = await getCurrentUser();
+export default function Dashboard() {
+  // const user = await getCurrentUser();
+  const user = { name: "Admin", email: "admin@shreejewellers.com" };
   const [recentBills, setRecentBills] = useState([
     {
       id: "INV-001",

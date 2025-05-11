@@ -9,6 +9,7 @@ import { Sparkles, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios from "axios";
 import {
   Card,
   CardContent,
@@ -24,7 +25,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebase/client";
-import { Login } from "@/lib/actions/auth.action";
+// import { Login } from "@/lib/actions/auth.action";
 
 const LoginFormSchema = z.object({
   email: z.string().email({ message: "Email is required" }),
@@ -76,7 +77,20 @@ export default function LoginPage() {
         return;
       }
 
-      await Login({ email: email, idToken: idToken });
+      // await Login({ email: email, idToken: idToken });
+
+      const response = await axios.post("/api/auth/login", { email, idToken });
+
+      if (response.status !== 200) {
+        console.log("Login failed");
+
+        toast({
+          title: "Login failed",
+          description: "An error occurred during login. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       console.log("Login success");
 

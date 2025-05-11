@@ -19,9 +19,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/actions/auth.action";
 
-const LandingPage = async () => {
+const LandingPage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
+  // useEffect(() => {
+  //   const checkAuthentication = async () => {
+  //     const isUserAuthenticated = await isAuthenticated();
+
+  //     if (isUserAuthenticated) {
+  //       redirect("/dashboard");
+  //     }
+  //   };
+
+  //   checkAuthentication();
+  // }, []);
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

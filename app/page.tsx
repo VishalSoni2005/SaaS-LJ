@@ -1,9 +1,8 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ArrowRight,
   Download,
@@ -16,23 +15,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Card, CardContent } from "@/components/ui/card";
-import { redirect } from "next/navigation";
-import { isAuthenticated } from "@/lib/actions/auth.action";
 
-const LandingPage = () => {
+function LandingPage() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  // useEffect(() => {
-  //   const checkAuthentication = async () => {
-  //     const isUserAuthenticated = await isAuthenticated();
-
-  //     if (isUserAuthenticated) {
-  //       redirect("/dashboard");
-  //     }
-  //   };
-
-  //   checkAuthentication();
-  // }, []);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -146,8 +131,8 @@ const LandingPage = () => {
                 size="lg"
                 className="w-full sm:w-auto"
                 asChild>
-                <Link href="/login">
-                  Start Billing <ArrowRight className="ml-2 h-4 w-4" />
+                <Link href="/dashboard">
+                  Dashboard <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <Button
@@ -411,6 +396,6 @@ const LandingPage = () => {
       </footer>
     </div>
   );
-};
+}
 
 export default LandingPage;

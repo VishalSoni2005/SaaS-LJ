@@ -4,7 +4,7 @@ import React from "react";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import {
   Home,
   FileText,
@@ -24,7 +24,6 @@ import { Suspense } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
 import {
-  getCurrentUser,
   getCurrentUserClient,
 } from "@/lib/actions/auth.action";
 
@@ -39,13 +38,6 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const Curr_user = await getCurrentUserClient();
-      if (Curr_user) setUser(user);
-    };
-    fetchUser();
-  });
 
   //  const user = { name: "vishal", email: "lakhiJewe@gmail.com" };
 

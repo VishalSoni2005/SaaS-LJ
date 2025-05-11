@@ -31,7 +31,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getCurrentUser } from "@/lib/actions/auth.action";
 
 export default function Dashboard() {
   // const user = await getCurrentUser();

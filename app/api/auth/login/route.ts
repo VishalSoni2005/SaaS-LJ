@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const expiresIn = 60 * 60 * 24 * 7; // 7 days
+    const expiresIn = 60 * 60 * 24 * 7 * 1000; // 7 days
     const sessionCookie = await auth.createSessionCookie(idToken, {
       expiresIn,
     });
@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
     response.cookies.set("session", sessionCookie, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
-      maxAge: expiresIn,
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
     return response;

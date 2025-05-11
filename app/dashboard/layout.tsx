@@ -23,9 +23,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Suspense } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
-import {
-  getCurrentUserClient,
-} from "@/lib/actions/auth.action";
+import { getCurrentUserClient } from "@/lib/actions/auth.action";
 
 export default function DashboardLayout({
   children,
@@ -37,10 +35,14 @@ export default function DashboardLayout({
 
   const pathname = usePathname();
   const { toast } = useToast();
-
-
-  //  const user = { name: "vishal", email: "lakhiJewe@gmail.com" };
-
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUserClient();
+      setUser(currentUser);
+    };
+    fetchUser();
+  }, []);
+  
   // Handle logout
   const handleLogout = () => {
     // logout()

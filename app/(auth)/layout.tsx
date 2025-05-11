@@ -1,5 +1,4 @@
 import { isAuthenticated } from '@/lib/actions/auth.action';
-import axios from 'axios';
 import { redirect } from 'next/navigation';
 import React from 'react'
 

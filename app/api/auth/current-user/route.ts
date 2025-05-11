@@ -25,17 +25,15 @@ export async function GET() {
     const { uid, email, displayName } = response;
 
     const user = {
-      name: "displayName",
-      email: "email",
-      uid: "uid",
+      name: displayName || "Fix it",
+      email: email,
+      uid: uid,
     };
 
-    return NextResponse.json(
-      { user, msg: "success" },
-      
-    );
+    return NextResponse.json({ user, msg: "success" });
   } catch (error) {
     console.error("Error in current-user API:", error);
     return NextResponse.json({ user: null }, { status: 401 });
   }
 }
+

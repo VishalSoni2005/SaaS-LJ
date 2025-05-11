@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,10 +31,20 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getCurrentUserClient } from "@/lib/actions/auth.action";
 
 export default function Dashboard() {
-  // const user = await getCurrentUser();
-  const user = { name: "Admin", email: "admin@shreejewellers.com" };
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const user = await getCurrentUserClient();
+      if (user) {
+        setUser(user);
+      }
+    };
+    getCurrentUser();
+  });
+  // const user = { name: "Admin", email: "admin@shreejewellers.com" };
   const [recentBills, setRecentBills] = useState([
     {
       id: "INV-001",

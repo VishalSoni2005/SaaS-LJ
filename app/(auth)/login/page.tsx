@@ -79,7 +79,15 @@ export default function LoginPage() {
 
       // await Login({ email: email, idToken: idToken });
 
-      const response = await axios.post("/api/auth/login", { email, idToken });
+      const response = await axios.post(
+        "/api/auth/login",
+        { email, idToken },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.status !== 200) {
         console.log("Login failed");

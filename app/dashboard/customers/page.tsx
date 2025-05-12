@@ -1,12 +1,25 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -15,21 +28,30 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Download, Edit, Search, Trash, UserPlus } from "lucide-react"
-import { useToast } from "@/components/ui/use-toast"
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Download, Edit, Search, Trash, UserPlus } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+import { getCurrentUserClient } from "@/lib/actions/auth.action";
+
+import { useTestStore } from '@/lib/store/useTestStore';
+import { useDBStore } from '@/lib/store/useDBStore';
 
 export default function CustomersPage() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [isAddingCustomer, setIsAddingCustomer] = useState(false)
+
+  const { customerCollection, fetchCustomerCollection } = useDBStore();
+
+  const [user, setUser] = useState<User|null>(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAddingCustomer, setIsAddingCustomer] = useState(false);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
     phone: "",
     email: "",
     address: "",
-  })
-  const { toast } = useToast()
+  });
+  const { toast } = useToast();
 
   const customers = [
     {
@@ -96,22 +118,31 @@ export default function CustomersPage() {
       totalSpent: "₹41,200",
       lastPurchase: "2023-06-01",
     },
-  ]
+  ];
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUserClient();
+      setUser(currentUser);
+    };
+    fetchUser();
+    fetchCustomerCollection();
+  }, []);
 
   // Filter customers based on search term
   const filteredCustomers = customers.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.phone.includes(searchTerm) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+      customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAddCustomer = () => {
     // In a real app, this would be an API call to add a customer
     toast({
       title: "Customer added",
       description: `${newCustomer.name} has been added to your customers.`,
-    })
+    });
 
     // Reset form and close dialog
     setNewCustomer({
@@ -119,31 +150,41 @@ export default function CustomersPage() {
       phone: "",
       email: "",
       address: "",
-    })
-    setIsAddingCustomer(false)
-  }
+    });
+    setIsAddingCustomer(false);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setNewCustomer((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setNewCustomer((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Customers</h1>
+        <h1 className="text-3xl font-bold">Customers of {user?.email.split("@")[0]}</h1>
         <p className="text-muted-foreground">Manage your customer database.</p>
       </div>
 
+      <button 
+        onClick={ () => console.log("customer collection: ", customerCollection) }
+        
+      className=' h-6 w-6 bg-yellow-600 text-black '>Click</button>
+
+      
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>All Customers</CardTitle>
-              <CardDescription>A list of all your customers and their purchase history.</CardDescription>
+              <CardDescription>
+                A list of all your customers and their purchase history.
+              </CardDescription>
             </div>
             <div className="flex gap-2">
-              <Dialog open={isAddingCustomer} onOpenChange={setIsAddingCustomer}>
+              <Dialog
+                open={isAddingCustomer}
+                onOpenChange={setIsAddingCustomer}>
                 <DialogTrigger asChild>
                   <Button className="bg-amber-500 hover:bg-amber-600">
                     <UserPlus className="mr-2 h-4 w-4" />
@@ -153,7 +194,9 @@ export default function CustomersPage() {
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Add New Customer</DialogTitle>
-                    <DialogDescription>Enter the customer details below.</DialogDescription>
+                    <DialogDescription>
+                      Enter the customer details below.
+                    </DialogDescription>
                   </DialogHeader>
                   <div className="grid gap-4 py-4">
                     <div className="grid gap-2">
@@ -199,10 +242,14 @@ export default function CustomersPage() {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button variant="outline" onClick={() => setIsAddingCustomer(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsAddingCustomer(false)}>
                       Cancel
                     </Button>
-                    <Button className="bg-amber-500 hover:bg-amber-600" onClick={handleAddCustomer}>
+                    <Button
+                      className="bg-amber-500 hover:bg-amber-600"
+                      onClick={handleAddCustomer}>
                       Add Customer
                     </Button>
                   </DialogFooter>
@@ -245,17 +292,24 @@ export default function CustomersPage() {
                 {filteredCustomers.length > 0 ? (
                   filteredCustomers.map((customer) => (
                     <TableRow key={customer.id}>
-                      <TableCell className="font-medium">{customer.name}</TableCell>
+                      <TableCell className="font-medium">
+                        {customer.name}
+                      </TableCell>
                       <TableCell>{customer.phone}</TableCell>
                       <TableCell>{customer.email}</TableCell>
                       <TableCell>{customer.totalSpent}</TableCell>
                       <TableCell>{customer.lastPurchase}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm">
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-700">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-500 hover:text-red-700">
                           <Trash className="mr-2 h-4 w-4" />
                           Delete
                         </Button>
@@ -264,7 +318,9 @@ export default function CustomersPage() {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell
+                      colSpan={6}
+                      className="h-24 text-center">
                       No customers found matching your search criteria.
                     </TableCell>
                   </TableRow>
@@ -278,16 +334,26 @@ export default function CustomersPage() {
               Showing {filteredCustomers.length} of {customers.length} customers
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" disabled>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled>
                 Previous
               </Button>
-              <Button variant="outline" size="sm" className="bg-muted">
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-muted">
                 1
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm">
                 2
               </Button>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm">
                 Next
               </Button>
             </div>
@@ -295,5 +361,5 @@ export default function CustomersPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

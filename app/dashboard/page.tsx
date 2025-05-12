@@ -32,8 +32,10 @@ import {
 } from "@/components/ui/sheet";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
+import { useTestStore } from '@/lib/store/useTestStore';
 
 export default function Dashboard() {
+
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     const getCurrentUser = async () => {
@@ -88,8 +90,9 @@ export default function Dashboard() {
       <div className="mb-6 sm:mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold">
-            Welcome, {user?.email || "User"}
+            Welcome, {user?.email.split("@")[0] || "$$$$$$$"}
           </h1>
+          {/* <p>customer count: {count}</p> */}
           <p className="text-muted-foreground">
             Here's what's happening with your jewellery business today.
           </p>

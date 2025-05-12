@@ -47,18 +47,16 @@ export const getCurrentUserClient = async () => {
   try {
     const cookieStore = await cookies();
     const sessionCookie = cookieStore.get("session");
-    console.log("Session Cookie: ", sessionCookie);
+    //* console.log("Session Cookie: ", sessionCookie);
 
     if (!sessionCookie) {
       return null;
     }
-    console.log("im herer");
 
     const decodedClaims = await auth.verifySessionCookie(
       sessionCookie.value,
       true
     );
-    console.log("im also here");
 
     const response = await auth.getUser(decodedClaims.uid);
     const { uid, email, displayName } = response;
@@ -67,7 +65,7 @@ export const getCurrentUserClient = async () => {
       email: email,
       id: uid,
     } as User;
-    console.log("user", user);
+    // console.log("user", user);
     return user;
   } catch (error: any) {
     console.log("Error getting current user:", error.message);
@@ -77,7 +75,7 @@ export const getCurrentUserClient = async () => {
 
 export const isAuthenticated = async () => {
   const user = await getCurrentUserClient();
-  console.log("Authenticated user", user);
+  // console.log("Authenticated user", user);
 
   return !!user;
 };

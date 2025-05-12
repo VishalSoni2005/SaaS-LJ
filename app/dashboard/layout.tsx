@@ -24,6 +24,7 @@ import { Suspense } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
+import { useTestStore } from '@/lib/store/useTestStore';
 
 interface User {
   name: string;
@@ -42,10 +43,13 @@ export default function DashboardLayout({
   const pathname = usePathname();
   const { toast } = useToast();
 
+  const { count } = useTestStore();
   useEffect(() => {
+
+
     const fetchUser = async () => {
       const currentUser = await getCurrentUserClient();
-      console.log("currentUser from useEffect Dashboard", currentUser);
+     //  console.log("currentUser from useEffect Dashboard", currentUser);
 
       if (currentUser) {
         setUser(currentUser);

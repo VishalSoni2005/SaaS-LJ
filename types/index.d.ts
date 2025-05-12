@@ -15,3 +15,14 @@ interface User {
   email: string;
   id: string;
 }
+
+interface Customer {
+  customer_id: number
+  name: string
+  contact_number: string
+  address: string
+  total_due: number
+  last_purchase: string
+  total_spent: number
+  created_at: string
+}

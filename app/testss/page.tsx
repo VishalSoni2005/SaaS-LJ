@@ -1,8 +1,7 @@
-'use client'
-
+"use client";
 
 import { useEffect } from "react";
-import { useDBStore } from '@/lib/store/useDBStore'; // Adjust the import path
+import { useDBStore } from "@/lib/store/useDBStore"; // Adjust the import path
 
 const page = () => {
   const {
@@ -25,7 +24,9 @@ const page = () => {
       {customerCollection && customerCollection.length > 0 ? (
         <ul>
           {customerCollection.map((customer) => (
-            <li key={customer.customer_id}>
+            <li
+              className="flex "
+              key={customer.customer_id}>
               <p>
                 <strong>Name:</strong> {customer.name}
               </p>

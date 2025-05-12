@@ -34,107 +34,52 @@ import { Download, Edit, Search, Trash, UserPlus } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
 
-import { useTestStore } from '@/lib/store/useTestStore';
-import { useDBStore } from '@/lib/store/useDBStore';
+import { useDBStore } from "@/lib/store/useDBStore";
 
 export default function CustomersPage() {
+  const [user, setUser] = useState<User | null>(null);
 
-  const { customerCollection, fetchCustomerCollection } = useDBStore();
+  const {
+    customerCollection,
+    isFetchingCustomers,
+    error,
+    fetchCustomerCollection,
+  } = useDBStore();
 
-  const [user, setUser] = useState<User|null>(null);
+  // const [customers, setCustomers] = useState<Customer[] | null>(null);
+  const customers = customerCollection;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isAddingCustomer, setIsAddingCustomer] = useState(false);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
+
     phone: "",
     email: "",
     address: "",
   });
   const { toast } = useToast();
 
-  const customers = [
-    {
-      id: 1,
-      name: "Rahul Sharma",
-      phone: "+91 98765 43210",
-      email: "rahul@example.com",
-      totalSpent: "₹1,45,000",
-      lastPurchase: "2023-05-15",
-    },
-    {
-      id: 2,
-      name: "Priya Patel",
-      phone: "+91 87654 32109",
-      email: "priya@example.com",
-      totalSpent: "₹2,78,500",
-      lastPurchase: "2023-05-18",
-    },
-    {
-      id: 3,
-      name: "Amit Singh",
-      phone: "+91 76543 21098",
-      email: "amit@example.com",
-      totalSpent: "₹92,750",
-      lastPurchase: "2023-05-20",
-    },
-    {
-      id: 4,
-      name: "Neha Gupta",
-      phone: "+91 65432 10987",
-      email: "neha@example.com",
-      totalSpent: "₹1,56,200",
-      lastPurchase: "2023-05-10",
-    },
-    {
-      id: 5,
-      name: "Vikram Mehta",
-      phone: "+91 54321 09876",
-      email: "vikram@example.com",
-      totalSpent: "₹3,94,300",
-      lastPurchase: "2023-05-22",
-    },
-    {
-      id: 6,
-      name: "Sanjay Kumar",
-      phone: "+91 43210 98765",
-      email: "sanjay@example.com",
-      totalSpent: "₹78,900",
-      lastPurchase: "2023-05-25",
-    },
-    {
-      id: 7,
-      name: "Anita Desai",
-      phone: "+91 32109 87654",
-      email: "anita@example.com",
-      totalSpent: "₹1,63,750",
-      lastPurchase: "2023-05-28",
-    },
-    {
-      id: 8,
-      name: "Rajesh Khanna",
-      phone: "+91 21098 76543",
-      email: "rajesh@example.com",
-      totalSpent: "₹41,200",
-      lastPurchase: "2023-06-01",
-    },
-  ];
-
   useEffect(() => {
     const fetchUser = async () => {
       const currentUser = await getCurrentUserClient();
       setUser(currentUser);
+      console.log("currentUser", currentUser);
     };
     fetchUser();
-    fetchCustomerCollection();
   }, []);
 
+  useEffect(() => {
+    const fetchCustomers = async () => await fetchCustomerCollection();
+    fetchCustomers();
+  }, [fetchCustomerCollection]);
+
   // Filter customers based on search term
-  const filteredCustomers = customers.filter(
+  const filteredCustomers = customers?.filter(
     (customer) =>
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone.includes(searchTerm) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+      customer?.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      customer?.contact_number.includes(searchTerm) ||
+      customer?.address.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleAddCustomer = () => {
@@ -162,16 +107,12 @@ export default function CustomersPage() {
   return (
     <div className="p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Customers of {user?.email.split("@")[0]}</h1>
+        <h1 className="text-3xl font-bold">
+          Customers of {user?.email.split("@")[0]}
+        </h1>
         <p className="text-muted-foreground">Manage your customer database.</p>
       </div>
 
-      <button 
-        onClick={ () => console.log("customer collection: ", customerCollection) }
-        
-      className=' h-6 w-6 bg-yellow-600 text-black '>Click</button>
-
-      
       <Card>
         <CardHeader>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -220,7 +161,7 @@ export default function CustomersPage() {
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label htmlFor="email">Email Address</Label>
+                      <Label htmlFor="email">Address</Label>
                       <Input
                         id="email"
                         name="email"
@@ -262,6 +203,7 @@ export default function CustomersPage() {
             </div>
           </div>
         </CardHeader>
+
         <CardContent>
           <div className="mb-6 flex flex-col gap-4 sm:flex-row">
             <div className="relative flex-1">
@@ -282,23 +224,24 @@ export default function CustomersPage() {
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Phone</TableHead>
-                  <TableHead>Email</TableHead>
+                  <TableHead>Address</TableHead>
                   <TableHead>Total Spent</TableHead>
                   <TableHead>Last Purchase</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
-                {filteredCustomers.length > 0 ? (
-                  filteredCustomers.map((customer) => (
-                    <TableRow key={customer.id}>
+                {filteredCustomers ?? [].length > 0 ? (
+                  (filteredCustomers ?? []).map((customer) => (
+                    <TableRow key={customer.customer_id}>
                       <TableCell className="font-medium">
                         {customer.name}
                       </TableCell>
-                      <TableCell>{customer.phone}</TableCell>
-                      <TableCell>{customer.email}</TableCell>
-                      <TableCell>{customer.totalSpent}</TableCell>
-                      <TableCell>{customer.lastPurchase}</TableCell>
+                      <TableCell>{customer.contact_number}</TableCell>
+                      <TableCell>{customer.address}</TableCell>
+                      <TableCell>{customer.total_spent}</TableCell>
+                      <TableCell>{customer.last_purchase}</TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="ghost"
@@ -331,7 +274,8 @@ export default function CustomersPage() {
 
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
-              Showing {filteredCustomers.length} of {customers.length} customers
+              Showing {filteredCustomers?.length} of {customers?.length}{" "}
+              customers
             </div>
             <div className="flex items-center gap-2">
               <Button

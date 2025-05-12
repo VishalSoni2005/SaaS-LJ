@@ -60,8 +60,7 @@ export default function DashboardLayout({
 
   // Handle logout
   const handleLogout = () => {
-    // logout()
-    // sessionStorage.removeItem("session");
+    
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
@@ -262,7 +261,7 @@ export default function DashboardLayout({
           <div className="ml-auto flex items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-100 text-amber-500">
-                {user?.name?.charAt(0) || "U"}
+                {user?.name?.charAt(0) || "Hi"}
               </div>
               <div className="hidden md:block">
                 <div className="text-sm font-medium">
@@ -273,6 +272,16 @@ export default function DashboardLayout({
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="border-t">
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-500 hover:bg-red-50 hover:text-red-600"
+              onClick={handleLogout}>
+              <LogOut className="mr-2 h-5 w-5" />
+              Logout
+            </Button>
           </div>
         </header>
 

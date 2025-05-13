@@ -25,6 +25,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { get } from "http";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
 import { useTestStore } from '@/lib/store/useTestStore';
+import axios from 'axios';
 
 interface User {
   name: string;
@@ -59,12 +60,20 @@ export default function DashboardLayout({
   }, []);
 
   // Handle logout
-  const handleLogout = () => {
-    
+  const handleLogout = async () => {
+    const logout = await axios.post('/api/auth/logout');
+    console.log("logout", logout.data.msg);
+    if(logout.status === 200) {
+      redirect("/");
+    } else {
+      console.log("Error logging out");
+      
+    }
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",
     });
+    
   };
 
   // Close sidebar on mobile by default

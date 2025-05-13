@@ -35,16 +35,13 @@ import { useToast } from "@/components/ui/use-toast";
 import { getCurrentUserClient } from "@/lib/actions/auth.action";
 
 import { useDBStore } from "@/lib/store/useDBStore";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function CustomersPage() {
   const [user, setUser] = useState<User | null>(null);
 
-  const {
-    customerCollection,
-    isFetchingCustomers,
-    error,
-    fetchCustomerCollection,
-  } = useDBStore();
+  const { customerCollection, fetchCustomerCollection, isFetchingCustomers } =
+    useDBStore();
 
   // const [customers, setCustomers] = useState<Customer[] | null>(null);
   const customers = customerCollection;
@@ -53,26 +50,11 @@ export default function CustomersPage() {
   const [isAddingCustomer, setIsAddingCustomer] = useState(false);
   const [newCustomer, setNewCustomer] = useState({
     name: "",
-
     phone: "",
     email: "",
     address: "",
   });
   const { toast } = useToast();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const currentUser = await getCurrentUserClient();
-      setUser(currentUser);
-      console.log("currentUser", currentUser);
-    };
-    fetchUser();
-  }, []);
-
-  useEffect(() => {
-    const fetchCustomers = async () => await fetchCustomerCollection();
-    fetchCustomers();
-  }, [fetchCustomerCollection]);
 
   // Filter customers based on search term
   const filteredCustomers = customers?.filter(
@@ -104,11 +86,30 @@ export default function CustomersPage() {
     setNewCustomer((prev) => ({ ...prev, [name]: value }));
   };
 
+  useEffect(() => {
+    const fetchCustomers = async () => await fetchCustomerCollection();
+    fetchCustomers();
+  }, [fetchCustomerCollection]);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const currentUser = await getCurrentUserClient();
+      setUser(currentUser);
+      console.log("currentUser", currentUser);
+    };
+    fetchUser();
+  }, []);
+
   return (
-    <div className="p-6">
+    <div className="p-6 relative">
       <div className="mb-8">
         <h1 className="text-3xl font-bold">
-          Customers of {user?.email.split("@")[0]}
+          Customers{" "}
+          {user ? (
+            "of " + user?.email.split("@")[0]
+          ) : (
+            <Skeleton className="h-4 w-44 bg-yellow-700 dark:bg-gray-600 rounded-md border border-gray-400 animate-pulse" />
+          )}
         </h1>
         <p className="text-muted-foreground">Manage your customer database.</p>
       </div>
@@ -218,7 +219,7 @@ export default function CustomersPage() {
             </div>
           </div>
 
-          <div className="rounded-md border">
+          <div className=" sm:overflow-x-auto overflow-x-scroll rounded-md border min-w-[600px]">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -226,7 +227,9 @@ export default function CustomersPage() {
                   <TableHead>Phone</TableHead>
                   <TableHead>Address</TableHead>
                   <TableHead>Total Spent</TableHead>
+                  <TableHead>Total Due</TableHead>
                   <TableHead>Last Purchase</TableHead>
+                  <TableHead>Joined On</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -241,7 +244,16 @@ export default function CustomersPage() {
                       <TableCell>{customer.contact_number}</TableCell>
                       <TableCell>{customer.address}</TableCell>
                       <TableCell>{customer.total_spent}</TableCell>
+                      <TableCell
+                        className={`${
+                          customer.total_due > 0
+                            ? "text-red-500 "
+                            : " text-green-700"
+                        }`}>
+                        {customer.total_due}
+                      </TableCell>
                       <TableCell>{customer.last_purchase}</TableCell>
+                      <TableCell>{customer.created_at.split("T")[0]}</TableCell>
                       <TableCell className="text-right">
                         <Button
                           variant="ghost"
@@ -264,14 +276,14 @@ export default function CustomersPage() {
                     <TableCell
                       colSpan={6}
                       className="h-24 text-center">
-                      No customers found matching your search criteria.
+                      <Skeleton className="h-16 w-auto bg-gray-300 dark:bg-gray-600 animate-pulse rounded-md" />
                     </TableCell>
                   </TableRow>
                 )}
               </TableBody>
             </Table>
           </div>
-
+          {/* //! fotter */}
           <div className="mt-4 flex items-center justify-between">
             <div className="text-sm text-muted-foreground">
               Showing {filteredCustomers?.length} of {customers?.length}{" "}

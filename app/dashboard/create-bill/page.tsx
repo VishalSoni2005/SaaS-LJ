@@ -20,7 +20,7 @@ export default function CreateBillPage() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 
         {/* // todo: add new bill */}
-        <Link href={"/dashboard/bill/new-bill"}>
+        <Link href={"/dashboard/create-bill/new-bill"}>
           <Card className="shadow-lg rounded-2xl bg-white border border-gray-300">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium text-blue-700">

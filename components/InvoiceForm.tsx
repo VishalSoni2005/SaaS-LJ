@@ -616,7 +616,7 @@ export default function InvoiceForm() {
           <div className="bg-gradient-to-r from-amber-100 to-amber-50 p-6 border-t border-amber-200 space-y-4">
             {/* Total Making Charge */}
             <div className="flex justify-between items-center gap-y-4">
-              <div className="flex justify-center items-center gap-x-4">
+              <div className="flex justify-between items-center gap-x-4">
                 {" "}
                 <h3 className="text-xl font-serif font-semibold text-amber-900">
                   Total Making Charge
@@ -625,6 +625,10 @@ export default function InvoiceForm() {
                   // value={form.getValues("makingChargePercentage")?.toString()}
                   onValueChange={(value) => {
                     const percentage = Number(value);
+
+
+
+
                     form.setValue("makingChargePercentage", percentage);
 
                     // Calculate making charge based on the sum of all amounts
@@ -740,5 +744,4 @@ export default function InvoiceForm() {
     </>
   );
 }
-
 

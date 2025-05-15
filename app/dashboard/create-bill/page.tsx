@@ -62,7 +62,7 @@ export default function CreateBillPage() {
 
         {/* // todo: add paid invoices */}
 
-        <Link href={"/dashboard/bill/paid-invoices"}>
+        <Link href={"/dashboard/create-bill/paid-invoices"}>
           <Card className="shadow-lg rounded-2xl bg-white border border-gray-300">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg font-medium text-blue-700">

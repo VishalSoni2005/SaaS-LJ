@@ -626,9 +626,6 @@ export default function InvoiceForm() {
                   onValueChange={(value) => {
                     const percentage = Number(value);
 
-
-
-
                     form.setValue("makingChargePercentage", percentage);
 
                     // Calculate making charge based on the sum of all amounts
@@ -744,4 +741,3 @@ export default function InvoiceForm() {
     </>
   );
 }
-

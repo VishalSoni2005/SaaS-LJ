@@ -1,9 +1,19 @@
 import { auth } from "@/firebase/admin";
+import { error } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const { email, idToken } = await req.json();
+
+    console.log("Id token is ;L ", idToken);
+
+    if (!email || !idToken) {
+      return NextResponse.json(
+        { message: "Invalid credentials" },
+        { status: 401 }
+      );
+    }
 
     if (!idToken) {
       return NextResponse.json(
@@ -16,6 +26,10 @@ export async function POST(req: NextRequest) {
     const sessionCookie = await auth.createSessionCookie(idToken, {
       expiresIn,
     });
+
+    if (!sessionCookie) {
+      console.log("Error getting session cookie from firebase auth");
+    }
 
     const response = NextResponse.json({ message: "Session created" });
     response.cookies.set("session", sessionCookie, {

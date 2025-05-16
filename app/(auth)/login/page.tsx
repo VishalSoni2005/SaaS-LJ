@@ -51,8 +51,6 @@ export default function LoginPage() {
 
   //! todo: handleSubmin
   const handleSubmit = async (data: LoginForm) => {
-    console.log("form data is : ", data);
-
     setIsLoading(true);
 
     try {
@@ -63,7 +61,16 @@ export default function LoginPage() {
         password
       );
 
-      console.log("userCredentials", userCredentials);
+      if (!userCredentials) {
+        console.log("Error logging in");
+        console.error("Error logging in using firebase:", userCredentials);
+        toast({
+          title: "Login failed",
+          description: "An error occurred during login. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       const idToken = await userCredentials.user.getIdToken();
       console.log("idToken", idToken);
@@ -76,8 +83,6 @@ export default function LoginPage() {
         });
         return;
       }
-
-      // await Login({ email: email, idToken: idToken });
 
       const response = await axios.post(
         "/api/auth/login",

@@ -80,6 +80,26 @@ export default function CreateBillPage() {
             </CardContent>
           </Card>
         </Link>
+
+        {/* // todo: get complete purchase  */}
+        <Link href={"/dashboard/create-bill/paid-invoices"}>
+          <Card className="shadow-lg rounded-2xl bg-white border border-gray-300">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-medium text-blue-700">
+                Total Paid Invoices
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                <Check className="h-6 w-6 text-blue-600 mr-2" />
+                <div className="text-2xl font-bold">8</div>
+              </div>
+              <p className="text-sm text-gray-600 mt-1">
+                <span className="text-green-600">Paid</span>
+              </p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
     </div>
   );

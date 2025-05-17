@@ -8,6 +8,13 @@ const page = () => {
   const [tableLoading, setTableLoading] = useState(false);
   const [tableContent, setTableContent] = useState(null);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setTableLoading(true);
+    setTableContent("table content");
+    setTableLoading(false);
+  };
+
   return (
     <div className=" flex flex-col justify-center ">
       <div className="m-4 pl-8 underline capitalize italic font-semibold">
